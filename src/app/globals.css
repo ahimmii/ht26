@@ -121,24 +121,36 @@ body {
 }
 
 .btn-blood {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  border: 1px solid var(--blood);
-  background: var(--blood);
+  overflow: hidden;
+  border: 1px solid #c10a22;
+  background: linear-gradient(180deg, #c41228 0%, var(--blood) 100%);
   color: var(--bone);
   letter-spacing: 0.14em;
   word-spacing: 0.2em;
   text-transform: uppercase;
   font-size: 0.72rem;
   padding: 1rem 1.6rem;
+  box-shadow: 0 10px 30px rgba(160, 0, 21, 0.22);
   transition: transform 200ms ease, background 200ms ease, box-shadow 200ms ease;
 }
 
+.btn-blood::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 45%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent);
+  pointer-events: none;
+}
+
 .btn-blood:hover {
-  background: var(--blood-hot);
-  box-shadow: 0 0 32px rgba(160, 0, 21, 0.35);
+  background: linear-gradient(180deg, #d3142b 0%, #b00018 100%);
+  box-shadow: 0 0 36px rgba(160, 0, 21, 0.42);
 }
 
 .btn-ghost {
@@ -171,6 +183,205 @@ body {
   border: 0;
 }
 
+.hero-villa,
+.hero-villa-frame,
+.hero-villa-glow,
+.hero-villa-lights,
+.hero-villa-scrim,
+.hero-villa-grain {
+  pointer-events: none;
+}
+
+.hero-villa {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #080808;
+}
+
+.hero-villa-frame {
+  position: absolute;
+  inset: 0;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 38%,
+    rgba(0, 0, 0, 0.28) 50%,
+    rgba(0, 0, 0, 0.8) 62%,
+    #000 76%,
+    rgba(0, 0, 0, 0.75) 92%,
+    transparent 100%
+  );
+}
+
+.hero-villa-image {
+  object-fit: cover;
+  object-position: 68% 80%;
+  filter: blur(2.5px) saturate(1.08) contrast(1.06);
+  transform: scale(1.05);
+  animation: hero-villa-in 1.6s ease-out both;
+}
+
+.hero-villa-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 38% at 70% 72%, rgba(160, 0, 21, 0.28), transparent 64%),
+    radial-gradient(ellipse 40% 22% at 58% 88%, rgba(160, 0, 21, 0.16), transparent 70%);
+  animation: hero-pulse 7s ease-in-out infinite;
+}
+
+.hero-villa-lights {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 71% 58%, rgba(255, 196, 150, 0.1), transparent 8%),
+    radial-gradient(circle at 76% 61%, rgba(255, 170, 120, 0.08), transparent 6%),
+    radial-gradient(circle at 66% 63%, rgba(255, 180, 130, 0.07), transparent 5%);
+  mix-blend-mode: screen;
+}
+
+.hero-villa-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      #080808 0%,
+      #080808 42%,
+      rgba(8, 8, 8, 0.78) 54%,
+      rgba(8, 8, 8, 0.22) 70%,
+      rgba(8, 8, 8, 0.48) 88%,
+      #080808 100%
+    ),
+    linear-gradient(
+      to right,
+      rgba(8, 8, 8, 0.62) 0%,
+      rgba(8, 8, 8, 0.14) 20%,
+      transparent 42%,
+      transparent 74%,
+      rgba(8, 8, 8, 0.5) 100%
+    );
+}
+
+.hero-villa-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.hero-mark {
+  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.7));
+}
+
+.hero-rule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.hero-rule::before,
+.hero-rule::after {
+  content: "";
+  height: 1px;
+  width: 3.5rem;
+  background: linear-gradient(90deg, transparent, var(--blood), transparent);
+}
+
+.count-cell {
+  min-width: 3.4rem;
+  border-top: 1px solid rgba(160, 0, 21, 0.45);
+  padding-top: 0.7rem;
+}
+
+.site-nav a {
+  position: relative;
+}
+
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 100%;
+  height: 1px;
+  background: var(--blood);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms ease;
+}
+
+.site-nav a:hover {
+  color: var(--bone);
+}
+
+.site-nav a:hover::after {
+  transform: scaleX(1);
+}
+
+.stat-index {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--blood-hot);
+}
+
+@keyframes hero-villa-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-pulse {
+  0%,
+  100% {
+    opacity: 0.78;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-villa-image {
+    object-position: 74% 42%;
+    filter: blur(1.5px) saturate(1.05);
+    transform: scale(1.08);
+  }
+
+  .hero-villa-lights,
+  .hero-villa-glow {
+    animation: none;
+  }
+
+  .hero-villa-scrim {
+    background:
+      linear-gradient(
+        to bottom,
+        #080808 0%,
+        #080808 40%,
+        rgba(8, 8, 8, 0.86) 52%,
+        rgba(8, 8, 8, 0.42) 70%,
+        rgba(8, 8, 8, 0.62) 88%,
+        #080808 100%
+      ),
+      linear-gradient(
+        to right,
+        rgba(8, 8, 8, 0.5) 0%,
+        transparent 30%,
+        transparent 70%,
+        rgba(8, 8, 8, 0.5) 100%
+      );
+  }
+}
+
 @keyframes drift {
   0%,
   100% {
@@ -187,8 +398,14 @@ body {
   }
 
   .fog,
-  .grain {
+  .grain,
+  .hero-villa-image,
+  .hero-villa-glow {
     animation: none;
+  }
+
+  .hero-villa-image {
+    opacity: 1;
   }
 
   * {

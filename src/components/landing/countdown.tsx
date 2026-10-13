@@ -61,7 +61,7 @@ export function Countdown({ target, label }: { target: string; label: string }) 
           [pad(minutes), "M"],
           [pad(seconds), "S"],
         ].map(([value, unit]) => (
-          <div key={unit}>
+          <div key={unit} className="count-cell">
             <div>{value}</div>
             <div className="mt-1 text-[0.65rem] tracking-[0.16em] text-mist">{unit}</div>
           </div>

@@ -8,12 +8,12 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   const t = getDictionary(locale);
 
   return (
-    <header className="absolute inset-x-0 top-0 z-30">
+    <header className="absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-void via-void/70 to-transparent">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
         <Link href="/" aria-label="Halloweenn Tangier 2026">
           <BrandMark size="header" priority />
         </Link>
-        <nav className="hidden items-center gap-8 text-[0.72rem] tracking-[0.12em] uppercase text-mist md:flex">
+        <nav className="site-nav hidden items-center gap-8 text-[0.72rem] tracking-[0.12em] uppercase text-mist md:flex">
           <Link href="/#event">{t.nav.event}</Link>
           <Link href="/tickets">{t.nav.tickets}</Link>
           <Link href="/faq">{t.nav.faq}</Link>

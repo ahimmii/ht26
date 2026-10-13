@@ -8,6 +8,7 @@ import { getDictionary } from "@/lib/i18n-dictionary";
 import type { Locale } from "@/lib/i18n";
 import { BrandMark } from "@/components/ui/brand-mark";
 import { Countdown } from "./countdown";
+import { HeroVilla } from "./hero-villa";
 
 export function Hero({
   locale,
@@ -45,14 +46,13 @@ export function Hero({
   }, [reduceMotion]);
 
   return (
-    <section className="relative isolate flex min-h-screen items-center overflow-hidden">
-      <div className="fog" />
-      <div className="vignette" />
+    <section className="relative isolate flex min-h-screen items-center overflow-hidden bg-void">
+      <HeroVilla />
       {!reduceMotion ? (
         <div
-          className="pointer-events-none absolute inset-0 opacity-70"
+          className="pointer-events-none absolute inset-0 z-[1] opacity-50"
           style={{
-            background: `radial-gradient(420px circle at ${cursor.x}% ${cursor.y}%, rgba(160,0,21,0.22), transparent 50%)`,
+            background: `radial-gradient(420px circle at ${cursor.x}% ${cursor.y}%, rgba(160,0,21,0.18), transparent 50%)`,
           }}
         />
       ) : null}
@@ -72,9 +72,11 @@ export function Hero({
           className="mt-6 flex justify-center"
         >
           <span className="sr-only">{title}</span>
-          <BrandMark size="hero" priority className="mx-auto object-center" />
+          <BrandMark size="hero" priority className="hero-mark mx-auto object-center" />
         </motion.h1>
-        <p className="font-serif mt-4 max-w-2xl text-2xl text-mist md:text-3xl">{tagline}</p>
+        <p className="hero-rule font-serif mt-2 max-w-2xl text-2xl italic text-mist md:text-3xl">
+          {tagline}
+        </p>
 
         <div className="mt-12 flex w-full flex-col items-center gap-10 md:flex-row md:items-end md:justify-between">
           <Countdown target={eventDate} label={t.hero.countdownLabel} />

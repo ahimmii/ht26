@@ -30,12 +30,12 @@ export default async function HomePage() {
         capacity={event.capacity}
       />
 
-      <section id="event" className="mx-auto max-w-6xl px-5 py-28">
+      <section id="event" className="relative mx-auto max-w-6xl px-5 py-28">
         <div className="blood-line mb-16" />
-        <div className="grid gap-16 md:grid-cols-2">
+        <div className="grid gap-16 md:grid-cols-[1.1fr_0.9fr] md:items-end">
           <div>
             <p className="eyebrow">Manifesto</p>
-            <h2 className="font-serif mt-6 text-4xl md:text-6xl">
+            <h2 className="font-serif mt-6 text-4xl leading-tight md:text-6xl">
               {pickLocalized(locale, event.tagline, event.taglineFr)}
             </h2>
           </div>
@@ -47,19 +47,21 @@ export default async function HomePage() {
 
       <section className="mx-auto grid max-w-6xl gap-12 px-5 pb-28 md:grid-cols-3">
         {[
-          [locale === "fr" ? "Date" : "Date", formatDate(event.date, locale)],
-          [locale === "fr" ? "Lieu" : "Venue", pickLocalized(locale, event.venue, event.venueFr)],
-          [t.tickets.remaining, `${remaining} / ${event.capacity}`],
-        ].map(([label, value]) => (
+          ["01", locale === "fr" ? "Date" : "Date", formatDate(event.date, locale)],
+          ["02", locale === "fr" ? "Lieu" : "Venue", pickLocalized(locale, event.venue, event.venueFr)],
+          ["03", t.tickets.remaining, `${remaining} / ${event.capacity}`],
+        ].map(([index, label, value]) => (
           <div key={label} className="border-t border-white/10 pt-6">
-            <p className="eyebrow">{label}</p>
+            <p className="stat-index">{index}</p>
+            <p className="eyebrow mt-4">{label}</p>
             <p className="font-serif mt-4 text-2xl">{value}</p>
           </div>
         ))}
       </section>
 
       <section className="relative overflow-hidden px-5 py-28">
-        <div className="fog opacity-60" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_70%_120%,rgba(160,0,21,0.18),transparent_55%)]" />
+        <div className="blood-line absolute inset-x-0 top-0" />
         <div className="relative mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 md:flex-row md:items-end">
           <div>
             <p className="eyebrow">General admission</p>
