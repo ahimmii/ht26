@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600" role="img" aria-label="Halloween Tangier 2026 poster">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#2a0a10"/>
+      <stop offset="55%" stop-color="#120808"/>
+      <stop offset="100%" stop-color="#080808"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="1600" fill="url(#g)"/>
+  <rect x="48" y="48" width="1104" height="1504" fill="none" stroke="#A00015" stroke-opacity="0.7"/>
+  <text x="600" y="430" text-anchor="middle" fill="#F4EFE6" font-family="Times New Roman, serif" font-size="92" letter-spacing="18">HALLOWEEN</text>
+  <text x="600" y="540" text-anchor="middle" fill="#A00015" font-family="Times New Roman, serif" font-size="56" letter-spacing="16">TANGIER 2026</text>
+  <text x="600" y="820" text-anchor="middle" fill="#9B8F86" font-family="Helvetica, Arial, sans-serif" font-size="22" letter-spacing="10">OCTOBER 31 — TANGIER</text>
+  <text x="600" y="1180" text-anchor="middle" fill="#F4EFE6" font-family="Times New Roman, serif" font-size="28" letter-spacing="6">ONE NIGHT. NO SECOND CHANCES.</text>
+</svg>

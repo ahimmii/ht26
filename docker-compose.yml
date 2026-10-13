@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: halloween
+      POSTGRES_PASSWORD: halloween
+      POSTGRES_DB: halloween_tangier
+    ports:
+      - "5432:5432"
+    volumes:
+      - halloween_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U halloween -d halloween_tangier"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  halloween_pgdata:

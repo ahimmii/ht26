@@ -1,0 +1,239 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+enum OrderStatus {
+  PENDING
+  PENDING_VERIFICATION
+  PAID
+  FAILED
+  EXPIRED
+  REFUNDED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CMI
+  MANUAL
+}
+
+enum TicketStatus {
+  VALID
+  USED
+  REVOKED
+  CANCELLED
+  REFUNDED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  role         Role
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  auditLogs    AuditLog[]
+  checkIns     CheckIn[]
+}
+
+model EventSettings {
+  id                     String   @id @default("default")
+  title                  String
+  titleFr                String
+  tagline                String
+  taglineFr              String
+  date                   DateTime
+  venue                  String
+  venueFr                String
+  address                String
+  city                   String
+  country                String
+  ticketPriceCents       Int
+  currency               String   @default("MAD")
+  capacity               Int
+  reservedCount          Int      @default(0)
+  confirmedCount         Int      @default(0)
+  description            String   @db.Text
+  descriptionFr          String   @db.Text
+  posterUrl              String?
+  salesOpenAt            DateTime
+  salesCloseAt           DateTime
+  reservationMinutes     Int      @default(15)
+  manualReservationHours Int      @default(48)
+  ageRestriction         Int      @default(18)
+  bankName               String?
+  bankAccountName        String?
+  bankIban               String?
+  bankReferenceHint      String?
+  contactEmail           String
+  contactPhone           String?
+  instagramUrl           String?
+  tiktokUrl              String?
+  metaPixelId            String?
+  gaMeasurementId        String?
+  updatedAt              DateTime @updatedAt
+}
+
+model Order {
+  id                String         @id @default(cuid())
+  reference         String         @unique
+  customerName      String
+  email             String
+  phone             String
+  quantity          Int
+  unitPriceCents    Int
+  discountCents     Int            @default(0)
+  totalCents        Int
+  status            OrderStatus    @default(PENDING)
+  paymentMethod     PaymentMethod
+  paymentProvider   String?
+  paymentExternalId String?        @unique
+  promoCodeId       String?
+  promoCode         PromoCode?     @relation(fields: [promoCodeId], references: [id])
+  ambassadorCode    String?
+  utmSource         String?
+  utmMedium         String?
+  utmCampaign       String?
+  locale            String         @default("en")
+  expiresAt         DateTime
+  paidAt            DateTime?
+  cancelledAt       DateTime?
+  idempotencyKey    String?        @unique
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  tickets           Ticket[]
+  payments          PaymentEvent[]
+
+  @@index([email])
+  @@index([status])
+  @@index([ambassadorCode])
+  @@index([createdAt])
+}
+
+model Ticket {
+  id          String       @id @default(cuid())
+  token       String       @unique
+  publicCode  String       @unique
+  orderId     String
+  order       Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  holderName  String
+  status      TicketStatus @default(VALID)
+  checkedInAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  checkIns    CheckIn[]
+
+  @@index([orderId])
+  @@index([status])
+}
+
+model CheckIn {
+  id        String   @id @default(cuid())
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  staffId   String
+  staff     User     @relation(fields: [staffId], references: [id])
+  result    String
+  createdAt DateTime @default(now())
+
+  @@index([ticketId])
+}
+
+model PromoCode {
+  id               String       @id @default(cuid())
+  code             String       @unique
+  type             DiscountType
+  value            Int
+  expiresAt        DateTime?
+  usageLimit       Int?
+  usedCount        Int          @default(0)
+  perCustomerLimit Int          @default(1)
+  active           Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+  orders           Order[]
+}
+
+model Ambassador {
+  id        String          @id @default(cuid())
+  code      String          @unique
+  name      String
+  active    Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  visits    CampaignVisit[]
+}
+
+model CampaignVisit {
+  id           String      @id @default(cuid())
+  ambassadorId String?
+  ambassador   Ambassador? @relation(fields: [ambassadorId], references: [id])
+  utmSource    String?
+  utmMedium    String?
+  utmCampaign  String?
+  path         String
+  createdAt    DateTime    @default(now())
+
+  @@index([ambassadorId])
+  @@index([createdAt])
+}
+
+model PaymentEvent {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider    String
+  type        String
+  payloadHash String?
+  success     Boolean
+  note        String?
+  createdAt   DateTime @default(now())
+
+  @@index([orderId])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id])
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([entity, entityId])
+}
+
+model ProcessedWebhook {
+  id         String   @id @default(cuid())
+  provider   String
+  externalId String
+  createdAt  DateTime @default(now())
+
+  @@unique([provider, externalId])
+}
