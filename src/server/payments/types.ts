@@ -9,6 +9,14 @@ export type PaymentInitiation =
       fields: Record<string, string>;
     }
   | {
+      kind: "redirect";
+      provider: "STRIPE";
+      url: string;
+      method: "GET";
+      fields: Record<string, string>;
+      externalId?: string;
+    }
+  | {
       kind: "instructions";
       provider: "MANUAL";
       orderReference: string;
@@ -19,7 +27,7 @@ export type PaymentVerification =
   | { ok: false; reason: string };
 
 export interface PaymentProvider {
-  id: "CMI" | "MANUAL";
+  id: "CMI" | "MANUAL" | "STRIPE";
   enabled(): boolean;
   initiate(order: Order, event: EventSettings): Promise<PaymentInitiation>;
 }

@@ -13,7 +13,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           <BrandMark size="footer" />
           <p className="mt-3 text-sm text-mist">Tangier, Morocco</p>
         </div>
-        <div className="flex flex-wrap gap-5 text-[0.72rem] uppercase tracking-[0.12em] text-mist">
+        <div className="ui-meta flex flex-wrap gap-5 text-[0.72rem] uppercase text-mist">
           <Link href="/terms">{t.footer.terms}</Link>
           <Link href="/privacy">{t.footer.privacy}</Link>
           <Link href="/refund">{t.footer.refund}</Link>

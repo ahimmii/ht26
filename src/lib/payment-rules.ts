@@ -13,7 +13,7 @@ export function assertNotClientRedirectConfirmation(source: string) {
 
 export function canConfirmPayment(source: string, status: string) {
   assertNotClientRedirectConfirmation(source);
-  if (source !== "admin_verify" && source !== "cmi_callback") {
+  if (source !== "admin_verify" && source !== "cmi_callback" && source !== "stripe_webhook") {
     throw new Error("Payment source is not authorized");
   }
   if (status === "PAID") return "idempotent";

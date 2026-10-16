@@ -36,13 +36,14 @@ function getSnapshot() {
 }
 
 function getServerSnapshot() {
-  return 0;
+  return Date.now();
 }
 
 export function Countdown({ target, label }: { target: string; label: string }) {
   const now = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const targetMs = new Date(target).getTime();
-  const remaining = Math.max(0, now === 0 ? 0 : targetMs - now);
+  const clock = now > 0 ? now : Date.now();
+  const remaining = Math.max(0, targetMs - clock);
   const days = Math.floor(remaining / 86_400_000);
   const hours = Math.floor((remaining % 86_400_000) / 3_600_000);
   const minutes = Math.floor((remaining % 3_600_000) / 60_000);
@@ -52,7 +53,7 @@ export function Countdown({ target, label }: { target: string; label: string }) 
     <div>
       <p className="eyebrow mb-4">{label}</p>
       <div
-        className="flex gap-5 font-display text-4xl tracking-[0.12em] md:text-5xl"
+        className="flex gap-5 font-display text-4xl tracking-[0.08em] md:text-5xl"
         suppressHydrationWarning
       >
         {[
@@ -62,7 +63,7 @@ export function Countdown({ target, label }: { target: string; label: string }) 
           [pad(seconds), "S"],
         ].map(([value, unit]) => (
           <div key={unit} className="count-cell">
-            <div>{value}</div>
+            <div suppressHydrationWarning>{value}</div>
             <div className="mt-1 text-[0.65rem] tracking-[0.16em] text-mist">{unit}</div>
           </div>
         ))}

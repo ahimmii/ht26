@@ -12,7 +12,7 @@ export function LanguageToggle({ locale }: { locale: Locale }) {
       type="button"
       disabled={pending}
       onClick={() => start(() => setLocale(locale === "en" ? "fr" : "en"))}
-      className="text-[0.72rem] uppercase tracking-[0.12em] text-mist"
+      className="ui-meta text-[0.72rem] uppercase text-mist"
     >
       {locale === "en" ? "FR" : "EN"}
     </button>

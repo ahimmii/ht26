@@ -13,7 +13,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
         <Link href="/" aria-label="Halloweenn Tangier 2026">
           <BrandMark size="header" priority />
         </Link>
-        <nav className="site-nav hidden items-center gap-8 text-[0.72rem] tracking-[0.12em] uppercase text-mist md:flex">
+        <nav className="site-nav ui-meta hidden items-center gap-8 text-[0.72rem] uppercase text-mist md:flex">
           <Link href="/#event">{t.nav.event}</Link>
           <Link href="/tickets">{t.nav.tickets}</Link>
           <Link href="/faq">{t.nav.faq}</Link>

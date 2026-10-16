@@ -74,9 +74,11 @@ export function Hero({
           <span className="sr-only">{title}</span>
           <BrandMark size="hero" priority className="hero-mark mx-auto object-center" />
         </motion.h1>
-        <p className="hero-rule font-serif mt-2 max-w-2xl text-2xl italic text-mist md:text-3xl">
-          {tagline}
-        </p>
+        <div className="hero-rule mt-2">
+          <p className="hero-rule-text font-serif max-w-2xl text-2xl italic text-mist md:text-3xl">
+            {tagline}
+          </p>
+        </div>
 
         <div className="mt-12 flex w-full flex-col items-center gap-10 md:flex-row md:items-end md:justify-between">
           <Countdown target={eventDate} label={t.hero.countdownLabel} />
@@ -84,7 +86,7 @@ export function Hero({
             <Link href="/tickets" className="btn-blood">
               {t.hero.buy}
             </Link>
-            <div className="flex gap-8 text-xs uppercase tracking-[0.12em] text-mist md:justify-end">
+            <div className="ui-meta flex gap-8 text-xs uppercase text-mist md:justify-end">
               <p>
                 {t.hero.limited}
                 <span className="mt-1 block text-bone">

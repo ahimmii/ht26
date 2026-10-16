@@ -39,7 +39,9 @@ const en = {
     terms: "I accept the terms, privacy policy and refund policy.",
     payManual: "Pay by bank transfer",
     payCmi: "Pay online (CMI)",
-    cmiUnavailable: "Online card payment is not configured yet.",
+    payStripe: "Pay with card (Stripe)",
+    cmiUnavailable: "Online card payment (CMI) is not configured yet.",
+    stripeUnavailable: "Card payment (Stripe) is not configured yet.",
     place: "Place order",
   },
   pending: {
@@ -97,7 +99,9 @@ const fr = {
     terms: "J'accepte les conditions, la politique de confidentialité et la politique de remboursement.",
     payManual: "Virement bancaire",
     payCmi: "Paiement en ligne (CMI)",
-    cmiUnavailable: "Le paiement par carte n'est pas encore configuré.",
+    payStripe: "Payer par carte (Stripe)",
+    cmiUnavailable: "Le paiement CMI n'est pas encore configuré.",
+    stripeUnavailable: "Le paiement Stripe n'est pas encore configuré.",
     place: "Valider la commande",
   },
   pending: {

@@ -47,6 +47,18 @@ export function getCmiConfig() {
   };
 }
 
+export function isStripeConfigured() {
+  return Boolean(optional("STRIPE_SECRET_KEY") && optional("STRIPE_WEBHOOK_SECRET"));
+}
+
+export function getStripeConfig() {
+  if (!isStripeConfigured()) return null;
+  return {
+    secretKey: required("STRIPE_SECRET_KEY"),
+    webhookSecret: required("STRIPE_WEBHOOK_SECRET"),
+  };
+}
+
 export function getSmtpConfig() {
   const host = optional("SMTP_HOST");
   const user = optional("SMTP_USER");

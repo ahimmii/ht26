@@ -8,9 +8,9 @@
   --bone: #f4efe6;
   --mist: #9b8f86;
   --line: rgba(244, 239, 230, 0.12);
-  --font-display: var(--font-cinzel), serif;
-  --font-serif: var(--font-cormorant), serif;
-  --font-sans: var(--font-outfit), sans-serif;
+  --font-display: var(--font-cinzel), "Times New Roman", serif;
+  --font-serif: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 @theme inline {
@@ -97,11 +97,19 @@ body {
   text-transform: uppercase;
 }
 
+.ui-meta,
+.eyebrow,
+.btn-blood,
+.btn-ghost {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: 0.05em;
+  word-spacing: 0.4em;
+  font-kerning: none;
+  font-variant-ligatures: none;
+}
+
 .eyebrow {
-  font-family: var(--font-sans);
   font-size: 0.72rem;
-  letter-spacing: 0.16em;
-  word-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--blood-hot);
 }
@@ -130,8 +138,6 @@ body {
   border: 1px solid #c10a22;
   background: linear-gradient(180deg, #c41228 0%, var(--blood) 100%);
   color: var(--bone);
-  letter-spacing: 0.14em;
-  word-spacing: 0.2em;
   text-transform: uppercase;
   font-size: 0.72rem;
   padding: 1rem 1.6rem;
@@ -158,8 +164,6 @@ body {
   align-items: center;
   justify-content: center;
   border: 1px solid var(--line);
-  letter-spacing: 0.14em;
-  word-spacing: 0.2em;
   text-transform: uppercase;
   font-size: 0.72rem;
   padding: 1rem 1.6rem;
@@ -206,20 +210,24 @@ body {
   mask-image: linear-gradient(
     to bottom,
     transparent 0%,
-    transparent 38%,
-    rgba(0, 0, 0, 0.28) 50%,
-    rgba(0, 0, 0, 0.8) 62%,
-    #000 76%,
-    rgba(0, 0, 0, 0.75) 92%,
+    transparent 22%,
+    rgba(0, 0, 0, 0.45) 38%,
+    rgba(0, 0, 0, 0.92) 54%,
+    #000 70%,
+    rgba(0, 0, 0, 0.88) 90%,
     transparent 100%
   );
 }
 
 .hero-villa-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: 68% 80%;
-  filter: blur(2.5px) saturate(1.08) contrast(1.06);
-  transform: scale(1.05);
+  filter: saturate(1.14) contrast(1.1) brightness(1.12);
+  transform: scale(1.04);
   animation: hero-villa-in 1.6s ease-out both;
 }
 
@@ -249,10 +257,10 @@ body {
     linear-gradient(
       to bottom,
       #080808 0%,
-      #080808 42%,
-      rgba(8, 8, 8, 0.78) 54%,
-      rgba(8, 8, 8, 0.22) 70%,
-      rgba(8, 8, 8, 0.48) 88%,
+      #080808 28%,
+      rgba(8, 8, 8, 0.55) 48%,
+      rgba(8, 8, 8, 0.1) 68%,
+      rgba(8, 8, 8, 0.28) 86%,
       #080808 100%
     ),
     linear-gradient(
@@ -281,7 +289,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 1.25rem;
+}
+
+.hero-rule-text {
+  letter-spacing: 0.02em;
+  word-spacing: 0.18em;
+  font-variant-ligatures: none;
 }
 
 .hero-rule::before,
@@ -310,9 +324,10 @@ body {
   width: 100%;
   height: 1px;
   background: var(--blood);
+  opacity: 0;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 220ms ease;
+  transition: transform 220ms ease, opacity 220ms ease;
 }
 
 .site-nav a:hover {
@@ -320,6 +335,7 @@ body {
 }
 
 .site-nav a:hover::after {
+  opacity: 1;
   transform: scaleX(1);
 }
 
@@ -352,7 +368,7 @@ body {
 @media (max-width: 767px) {
   .hero-villa-image {
     object-position: 74% 42%;
-    filter: blur(1.5px) saturate(1.05);
+    filter: saturate(1.08) contrast(1.06) brightness(1.08);
     transform: scale(1.08);
   }
 
@@ -366,10 +382,10 @@ body {
       linear-gradient(
         to bottom,
         #080808 0%,
-        #080808 40%,
-        rgba(8, 8, 8, 0.86) 52%,
-        rgba(8, 8, 8, 0.42) 70%,
-        rgba(8, 8, 8, 0.62) 88%,
+        #080808 26%,
+        rgba(8, 8, 8, 0.62) 46%,
+        rgba(8, 8, 8, 0.18) 68%,
+        rgba(8, 8, 8, 0.36) 86%,
         #080808 100%
       ),
       linear-gradient(

@@ -12,30 +12,98 @@ type ScanResponse = {
   orderReference?: string;
 };
 
+type ScannerHandle = {
+  pause: (shouldPauseVideo?: boolean) => void;
+  resume: () => void;
+  clear: () => Promise<void>;
+};
+
+const SAME_CODE_MS = 15_000;
+const RESUME_MS = 1_600;
+
+function scanKey(payload: { token?: string; publicCode?: string }) {
+  return (payload.token ?? payload.publicCode ?? "").trim().toLowerCase();
+}
+
 export function StaffScanner({ staffName }: { staffName: string }) {
   const mount = useRef<HTMLDivElement>(null);
+  const scannerRef = useRef<ScannerHandle | null>(null);
+  const lockRef = useRef(false);
+  const lastKeyRef = useRef("");
+  const lastAtRef = useRef(0);
+  const resumeTimer = useRef<number | null>(null);
+  const verifyRef = useRef<(payload: { token?: string; publicCode?: string }) => void>(
+    () => undefined,
+  );
   const [manual, setManual] = useState("");
   const [result, setResult] = useState<ScanResponse | null>(null);
   const [busy, setBusy] = useState(false);
 
-  async function verify(payload: { token?: string; publicCode?: string }) {
-    setBusy(true);
-    const response = await fetch("/api/staff/scan", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = (await response.json()) as ScanResponse & { error?: string };
-    setResult(
-      response.ok
-        ? data
-        : { outcome: "INVALID", reason: data.error ?? "Scan failed" },
-    );
-    setBusy(false);
+  function pauseCamera() {
+    try {
+      scannerRef.current?.pause(true);
+    } catch {
+      // Camera may not have started yet.
+    }
   }
 
+  function resumeCamera() {
+    try {
+      scannerRef.current?.resume();
+    } catch {
+      // Already running or torn down.
+    }
+  }
+
+  function releaseAfterHold() {
+    if (resumeTimer.current != null) {
+      window.clearTimeout(resumeTimer.current);
+    }
+    resumeTimer.current = window.setTimeout(() => {
+      lockRef.current = false;
+      resumeCamera();
+      resumeTimer.current = null;
+    }, RESUME_MS);
+  }
+
+  async function verify(payload: { token?: string; publicCode?: string }) {
+    const key = scanKey(payload);
+    if (!key) return;
+
+    const now = Date.now();
+    if (lockRef.current) return;
+    if (key === lastKeyRef.current && now - lastAtRef.current < SAME_CODE_MS) return;
+
+    lockRef.current = true;
+    lastKeyRef.current = key;
+    lastAtRef.current = now;
+    pauseCamera();
+    setBusy(true);
+
+    try {
+      const response = await fetch("/api/staff/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = (await response.json()) as ScanResponse & { error?: string };
+      setResult(
+        response.ok
+          ? data
+          : { outcome: "INVALID", reason: data.error ?? "Scan failed" },
+      );
+    } catch {
+      lastKeyRef.current = "";
+      setResult({ outcome: "INVALID", reason: "Scan failed" });
+    } finally {
+      setBusy(false);
+      releaseAfterHold();
+    }
+  }
+
+  verifyRef.current = verify;
+
   useEffect(() => {
-    let scanner: { clear: () => Promise<void> } | null = null;
     let cancelled = false;
 
     async function start() {
@@ -51,17 +119,18 @@ export function StaffScanner({ staffName }: { staffName: string }) {
           const token = text.includes("token=")
             ? new URL(text, window.location.origin).searchParams.get("token") ?? text
             : text;
-          void verify({ token });
+          verifyRef.current({ token });
         },
         () => undefined,
       );
-      scanner = instance;
+      scannerRef.current = instance;
     }
 
     void start();
     return () => {
       cancelled = true;
-      void scanner?.clear();
+      if (resumeTimer.current != null) window.clearTimeout(resumeTimer.current);
+      void scannerRef.current?.clear();
     };
   }, []);
 
@@ -96,15 +165,20 @@ export function StaffScanner({ staffName }: { staffName: string }) {
         </button>
       </form>
       <div className={`mx-auto mt-8 max-w-md p-8 text-center ${tone}`}>
-        <p className="font-display text-3xl tracking-[0.16em]">
+        <p className="font-display text-3xl tracking-[0.08em]">
           {result?.outcome ?? "READY"}
         </p>
         <p className="mt-3 text-lg">{result?.holderName}</p>
         <p className="text-sm opacity-80">{result?.publicCode}</p>
         <p className="mt-2 text-sm">{result?.reason}</p>
         {result?.checkedInAt ? (
-          <p className="mt-2 text-xs uppercase tracking-[0.2em]">
+          <p className="mt-2 text-xs uppercase tracking-[0.08em]">
             {new Date(result.checkedInAt).toLocaleString()}
+          </p>
+        ) : null}
+        {result ? (
+          <p className="mt-4 text-xs uppercase tracking-[0.08em] text-bone/70">
+            Aim the next ticket at the camera
           </p>
         ) : null}
       </div>

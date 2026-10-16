@@ -69,6 +69,23 @@ The CMI module builds a signed hosted-payment form and accepts only a server-to-
 
 This repository does not invent merchant credentials or simulate a successful card charge.
 
+### Stripe Checkout
+
+Card payment stays disabled until both are set in `.env`:
+
+- `STRIPE_SECRET_KEY` (`sk_test_…` or `sk_live_…` from the Stripe Dashboard)
+- `STRIPE_WEBHOOK_SECRET` (`whsec_…` from the webhook endpoint or `stripe listen`)
+
+Checkout redirects the guest to Stripe. Tickets are created only when `/api/payments/stripe/webhook` receives a signed `checkout.session.completed` (or async success) event with `payment_status=paid`. The Stripe success URL never marks an order paid.
+
+Local webhook forwarding:
+
+```bash
+stripe listen --forward-to localhost:3000/api/payments/stripe/webhook
+```
+
+Use the printed `whsec_…` as `STRIPE_WEBHOOK_SECRET`. Do not invent keys.
+
 ## Ticket lifecycle
 
 1. Guest reserves 1–6 admissions. Inventory is incremented atomically (`reservedCount + confirmedCount + qty <= capacity`).
@@ -98,13 +115,17 @@ Coverage includes inventory oversell protection, payment confirmation rules, web
 
 ## Deployment
 
-1. Provision PostgreSQL and set `DATABASE_URL`.
-2. Set `APP_URL`, `AUTH_SECRET`, and `CRON_SECRET`.
-3. Run `npx prisma migrate deploy && npm run db:seed` once.
-4. Build with `npm run build` and start with `npm start`, or deploy to a Node host (Vercel, Fly, a VPS).
+Production domain: **https://thesect.ma** (never `http://` for checkout or Stripe).
+
+1. Host the Next.js app and PostgreSQL (Vercel + a cloud Postgres, or a VPS). A domain name alone does not serve the site.
+2. At the registrar (ANRT / your `.ma` panel), point DNS at that host:
+   - `thesect.ma` → A or ALIAS of the host
+   - `www.thesect.ma` → CNAME to `thesect.ma` or the same host
+3. Set `APP_URL="https://thesect.ma"`, plus `AUTH_SECRET`, `CRON_SECRET`, and `DATABASE_URL`.
+4. Run `npx prisma migrate deploy && npm run db:seed` once.
 5. Schedule reservation expiry every minute against `/api/cron/expire-reservations`.
 6. Configure SMTP before selling live tickets.
-7. Add CMI credentials only after the merchant account and callback URL are approved.
+7. Stripe webhook URL: `https://thesect.ma/api/payments/stripe/webhook`. Add CMI credentials only after the merchant account and callback URL are approved.
 8. Serve the site over HTTPS.
 
 Legal pages still contain organizer placeholders and must be replaced before public sale.

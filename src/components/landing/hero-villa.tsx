@@ -1,15 +1,12 @@
-import Image from "next/image";
-
 export function HeroVilla() {
   return (
     <div className="hero-villa" aria-hidden>
       <div className="hero-villa-frame">
-        <Image
+        <img
           src="/images/halloween-villa.jpg"
           alt=""
-          fill
-          priority
-          sizes="100vw"
+          fetchPriority="high"
+          decoding="async"
           className="hero-villa-image"
         />
       </div>

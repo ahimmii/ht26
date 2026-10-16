@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cinzel, Cormorant_Garamond, Outfit } from "next/font/google";
+import { Cinzel, Cormorant_Garamond } from "next/font/google";
 import { CampaignTracker } from "@/components/ui/campaign-tracker";
 import { ConsentBanner } from "@/components/ui/consent-banner";
 import { TrackingScripts } from "@/components/ui/tracking-scripts";
@@ -16,12 +16,6 @@ const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
-});
-
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
 });
 
 export const instant = false;
@@ -51,7 +45,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={locale}
-      className={`${cinzel.variable} ${cormorant.variable} ${outfit.variable} h-full antialiased`}
+      className={`${cinzel.variable} ${cormorant.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-void text-bone">
         <div className="grain" aria-hidden />

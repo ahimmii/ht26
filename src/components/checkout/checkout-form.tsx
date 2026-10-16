@@ -20,12 +20,14 @@ export function CheckoutForm({
   unitPriceCents,
   currency,
   cmiEnabled,
+  stripeEnabled,
 }: {
   locale: Locale;
   quantity: number;
   unitPriceCents: number;
   currency: string;
   cmiEnabled: boolean;
+  stripeEnabled: boolean;
 }) {
   const t = getDictionary(locale);
   const router = useRouter();
@@ -36,6 +38,10 @@ export function CheckoutForm({
 
   useEffect(() => {
     if (state && typeof state === "object" && "redirect" in state && state.redirect) {
+      if (state.redirect.method === "GET") {
+        window.location.href = state.redirect.url;
+        return;
+      }
       const form = document.createElement("form");
       form.method = state.redirect.method;
       form.action = state.redirect.url;
@@ -120,13 +126,24 @@ export function CheckoutForm({
 
       <fieldset className="space-y-3">
         <label className="flex items-center gap-3 text-sm">
-          <input type="radio" name="paymentMethod" value="MANUAL" defaultChecked />
+          <input
+            type="radio"
+            name="paymentMethod"
+            value="STRIPE"
+            defaultChecked={stripeEnabled}
+            disabled={!stripeEnabled}
+          />
+          {t.checkout.payStripe}
+        </label>
+        <label className="flex items-center gap-3 text-sm">
+          <input type="radio" name="paymentMethod" value="MANUAL" defaultChecked={!stripeEnabled} />
           {t.checkout.payManual}
         </label>
         <label className="flex items-center gap-3 text-sm">
           <input type="radio" name="paymentMethod" value="CMI" disabled={!cmiEnabled} />
           {t.checkout.payCmi}
         </label>
+        {!stripeEnabled ? <p className="text-xs text-mist">{t.checkout.stripeUnavailable}</p> : null}
         {!cmiEnabled ? <p className="text-xs text-mist">{t.checkout.cmiUnavailable}</p> : null}
       </fieldset>
 

@@ -31,6 +31,9 @@ export default async function PendingOrderPage({
     <div className="min-h-screen">
       <SiteHeader locale={locale} />
       <main className="mx-auto max-w-2xl px-5 pb-24 pt-32">
+        {order.paymentMethod === "STRIPE" && order.status !== "FAILED" ? (
+          <meta httpEquiv="refresh" content="3" />
+        ) : null}
         <p className="eyebrow">{order.reference}</p>
         <h1 className="font-serif mt-4 text-5xl">{t.pending.title}</h1>
         <p className="mt-4 text-mist">{t.pending.body}</p>

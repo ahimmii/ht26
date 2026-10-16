@@ -1,6 +1,7 @@
 import "server-only";
 import { TicketStatus, type Order, type Prisma } from "@prisma/client";
 import { generatePublicCode, generateTicketToken } from "@/lib/utils";
+import { isRepeatScanEcho } from "@/lib/ticket-rules";
 
 export { buildQrPayload, qrContainsPii, QR_PII_FIELDS } from "@/lib/ticket-rules";
 
@@ -94,6 +95,16 @@ export async function checkInTicket(
   }
 
   if (ticket.status === "USED") {
+    if (isRepeatScanEcho(ticket.checkedInAt)) {
+      return {
+        outcome: "VALID",
+        ticketId: ticket.id,
+        holderName: ticket.holderName,
+        publicCode: ticket.publicCode,
+        orderReference: ticket.order.reference,
+        checkedInAt: ticket.checkedInAt ?? new Date(),
+      };
+    }
     await tx.checkIn.create({
       data: {
         ticketId: ticket.id,
@@ -117,7 +128,20 @@ export async function checkInTicket(
   });
 
   if (claimed.count !== 1) {
-    const latest = await tx.ticket.findUnique({ where: { id: ticket.id } });
+    const latest = await tx.ticket.findUnique({
+      where: { id: ticket.id },
+      include: { order: true },
+    });
+    if (latest && isRepeatScanEcho(latest.checkedInAt)) {
+      return {
+        outcome: "VALID",
+        ticketId: latest.id,
+        holderName: latest.holderName,
+        publicCode: latest.publicCode,
+        orderReference: latest.order.reference,
+        checkedInAt: latest.checkedInAt ?? now,
+      };
+    }
     await tx.checkIn.create({
       data: {
         ticketId: ticket.id,

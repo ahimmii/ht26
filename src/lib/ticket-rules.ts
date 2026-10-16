@@ -63,3 +63,19 @@ export function claimTicket(
   }
   return { ok: true, next: "USED" };
 }
+
+/** Camera frames often fire the same QR twice; treat a fresh check-in as the same scan. */
+export const REPEAT_SCAN_ECHO_MS = 8_000;
+
+export function isRepeatScanEcho(
+  checkedInAt: Date | string | null | undefined,
+  now: Date = new Date(),
+  windowMs = REPEAT_SCAN_ECHO_MS,
+) {
+  if (!checkedInAt) return false;
+  const at = typeof checkedInAt === "string" ? new Date(checkedInAt) : checkedInAt;
+  const ts = at.getTime();
+  if (Number.isNaN(ts)) return false;
+  const delta = now.getTime() - ts;
+  return delta >= 0 && delta < windowMs;
+}

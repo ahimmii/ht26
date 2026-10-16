@@ -1,11 +1,13 @@
 import "server-only";
 import { cmiProvider } from "./cmi";
 import { manualProvider } from "./manual";
+import { stripeProvider } from "./stripe";
 import type { PaymentProvider } from "./types";
 
 const providers: Record<PaymentProvider["id"], PaymentProvider> = {
   CMI: cmiProvider,
   MANUAL: manualProvider,
+  STRIPE: stripeProvider,
 };
 
 export function getPaymentProvider(id: PaymentProvider["id"]) {

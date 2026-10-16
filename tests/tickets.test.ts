@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { generateTicketToken } from "@/lib/utils";
-import { buildQrPayload, claimTicket, evaluateCheckIn, qrContainsPii } from "@/lib/ticket-rules";
+import {
+  buildQrPayload,
+  claimTicket,
+  evaluateCheckIn,
+  isRepeatScanEcho,
+  qrContainsPii,
+} from "@/lib/ticket-rules";
 import { runExclusive } from "@/lib/inventory-math";
 
 describe("tickets and QR validation", () => {
@@ -58,5 +64,12 @@ describe("tickets and QR validation", () => {
     const results = await Promise.all(attempts);
     expect(results.filter((result) => result === "VALID")).toHaveLength(1);
     expect(results.filter((result) => result === "ALREADY_USED")).toHaveLength(7);
+  });
+
+  it("treats a second camera read of a just-checked ticket as the same scan", () => {
+    const checkedInAt = new Date("2026-10-31T22:00:00.000Z");
+    expect(isRepeatScanEcho(checkedInAt, new Date("2026-10-31T22:00:03.000Z"))).toBe(true);
+    expect(isRepeatScanEcho(checkedInAt, new Date("2026-10-31T22:00:20.000Z"))).toBe(false);
+    expect(isRepeatScanEcho(null, new Date("2026-10-31T22:00:03.000Z"))).toBe(false);
   });
 });

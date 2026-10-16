@@ -1,7 +1,7 @@
 import { CheckoutForm } from "@/components/checkout/checkout-form";
 import { SiteFooter } from "@/components/ui/site-footer";
 import { SiteHeader } from "@/components/ui/site-header";
-import { isCmiConfigured } from "@/lib/env";
+import { isCmiConfigured, isStripeConfigured } from "@/lib/env";
 import { getLocale } from "@/lib/locale";
 import { getEventAvailability } from "@/server/event";
 
@@ -27,6 +27,7 @@ export default async function CheckoutPage({
           unitPriceCents={event.ticketPriceCents}
           currency={event.currency}
           cmiEnabled={isCmiConfigured()}
+          stripeEnabled={isStripeConfigured()}
         />
       </main>
       <SiteFooter locale={locale} />

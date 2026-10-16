@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const sizes = {
@@ -8,7 +7,7 @@ const sizes = {
     height: 90,
   },
   hero: {
-    className: "h-auto w-full max-w-[760px] object-contain object-left",
+    className: "h-auto w-full max-w-[760px] object-contain object-center",
     width: 1024,
     height: 682,
   },
@@ -35,12 +34,14 @@ export function BrandMark({
 }) {
   const spec = sizes[size];
   return (
-    <Image
+    // Static /logo.png so the crest still loads through a tunnel (no /_next/image).
+    <img
       src="/logo.png"
       alt="Halloweenn Tangier 2026"
       width={spec.width}
       height={spec.height}
-      priority={priority}
+      fetchPriority={priority ? "high" : undefined}
+      decoding="async"
       className={cn(spec.className, className)}
     />
   );

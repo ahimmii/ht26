@@ -25,6 +25,7 @@ enum OrderStatus {
 enum PaymentMethod {
   CMI
   MANUAL
+  STRIPE
 }
 
 enum TicketStatus {

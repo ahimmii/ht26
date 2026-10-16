@@ -113,6 +113,12 @@ export async function initiatePayment(order: Order) {
   const event = await getEventSettings();
   const provider = getPaymentProvider(order.paymentMethod);
   const initiation = await provider.initiate(order, event);
+  if (initiation.kind === "redirect" && "externalId" in initiation && initiation.externalId) {
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { paymentExternalId: initiation.externalId },
+    });
+  }
   await prisma.paymentEvent.create({
     data: {
       orderId: order.id,
@@ -127,12 +133,16 @@ export async function initiatePayment(order: Order) {
 export async function confirmPaidOrder(input: {
   orderId?: string;
   reference?: string;
-  source: "admin_verify" | "cmi_callback";
+  source: "admin_verify" | "cmi_callback" | "stripe_webhook";
   actorId?: string;
   externalId?: string;
   ip?: string;
 }) {
-  if (input.source !== "admin_verify" && input.source !== "cmi_callback") {
+  if (
+    input.source !== "admin_verify" &&
+    input.source !== "cmi_callback" &&
+    input.source !== "stripe_webhook"
+  ) {
     throw new OrderError("UNVERIFIED_SOURCE", "Payment source is not authorized");
   }
 
@@ -331,7 +341,7 @@ export async function markOrderFailed(reference: string, note?: string) {
       await tx.paymentEvent.create({
         data: {
           orderId: order.id,
-          provider: "cmi",
+          provider: order.paymentProvider ?? "system",
           type: "failed",
           success: false,
           note,

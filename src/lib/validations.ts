@@ -14,7 +14,7 @@ export const checkoutSchema = z.object({
     .trim()
     .regex(/^\+?[0-9\s.-]{8,20}$/, "Enter a valid phone number"),
   quantity: z.coerce.number().int().min(1).max(6),
-  paymentMethod: z.enum(["MANUAL", "CMI"]),
+  paymentMethod: z.enum(["MANUAL", "CMI", "STRIPE"]),
   promoCode: z.string().trim().max(40).optional().or(z.literal("")),
   acceptTerms: z.literal(true, {
     error: "You must accept the terms and refund policy",
